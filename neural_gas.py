@@ -3,19 +3,18 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 # Función para calcular la distancia euclidiana entre dos vectores
-def euclidean_distance(x, w):
-    return np.linalg.norm(x - w)
+def euclidean_distance(e, w):
+    return np.linalg.norm(e - w)
 
 # Función para encontrar el índice del nodo ganador (unidad de salida más cercana)
-def find_winner(x, som_map):
-    distances = [euclidean_distance(x, w) for w in som_map]
+def find_winner(e, som_map):
+    distances = [euclidean_distance(e, w) for w in som_map]
     return np.argmin(distances)
 
 # Función para actualizar los pesos de las unidades de salida
-def update_weights(x, som_map, winner, learning_rate):
+def update_weights(e, som_map, winner, learning_rate):
     for i in range(len(som_map)):
-        # Actualiza los pesos de las unidades de salida según la regla de aprendizaje de Gas Neural
-        som_map[i] += learning_rate * neighborhood_function(i, winner) * (x - som_map[i])
+        som_map[i] += learning_rate * neighborhood_function(i, winner) * (e - som_map[i])
 
 # Función de función de vecindad (neighborhood function) para el ajuste de pesos
 def neighborhood_function(idx, winner):
@@ -25,24 +24,32 @@ def neighborhood_function(idx, winner):
 
 # Función principal para entrenar el modelo de Gas Neural
 def train_gas_neural(data, som_map, signals, learning_rate, ax):
-    # Visualiza los datos generados aleatoriamente y el mapa de neuronas antes del entrenamiento
+    # Scatter plot of the input data points
     scat = ax.scatter(data[:, 0], data[:, 1], c='b', s=2)
+    
+    # Scatter plot of the neural gas map
     som_scatter = ax.scatter(som_map[:, 0], som_map[:, 1], c='r')
+    
+    # Circle representing the outer boundary of the data distribution
     circle_outer = plt.Circle((0.5, 0.5), 0.35, color='gray', fill=False, linestyle='-', linewidth=1)
+    
+    # Circle representing the inner boundary of the data distribution
     circle_inner = plt.Circle((0.5, 0.5), 0.25, color='gray', fill=False, linestyle='-', linewidth=1)
+    
+    # Add the outer circle to the plot
     ax.add_artist(circle_outer)
+    
+    # Add the inner circle to the plot
     ax.add_artist(circle_inner)
     
-    # Función de actualización para cada señal durante el entrenamiento
     def update(frame):
-        x = data[frame]
-        winner = find_winner(x, som_map)
-        update_weights(x, som_map, winner, learning_rate)
+        e = data[frame]
+        winner = find_winner(e, som_map)
+        update_weights(e, som_map, winner, learning_rate)
         som_scatter.set_offsets(som_map)
         print(f'Gas Neural - Signal {frame + 1}')
-        return som_scatter
+        return som_scatter,
     
-    # Crea la animación para mostrar el proceso de entrenamiento
     anim = FuncAnimation(ax.figure, update, frames=signals, interval=0.1, blit=True, repeat=False)
     ax.set_xlim(0, 1)  # Establecer límites de visualización en el eje x
     ax.set_ylim(0, 1)  # Establecer límites de visualización en el eje y
