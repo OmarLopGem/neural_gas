@@ -14,6 +14,7 @@ def find_winner(x, som_map):
 # Función para actualizar los pesos de las unidades de salida
 def update_weights(x, som_map, winner, learning_rate):
     for i in range(len(som_map)):
+        # Actualiza los pesos de las unidades de salida según la regla de aprendizaje de Gas Neural
         som_map[i] += learning_rate * neighborhood_function(i, winner) * (x - som_map[i])
 
 # Función de función de vecindad (neighborhood function) para el ajuste de pesos
@@ -24,6 +25,7 @@ def neighborhood_function(idx, winner):
 
 # Función principal para entrenar el modelo de Gas Neural
 def train_gas_neural(data, som_map, signals, learning_rate, ax):
+    # Visualiza los datos generados aleatoriamente y el mapa de neuronas antes del entrenamiento
     scat = ax.scatter(data[:, 0], data[:, 1], c='b', s=2)
     som_scatter = ax.scatter(som_map[:, 0], som_map[:, 1], c='r')
     circle_outer = plt.Circle((0.5, 0.5), 0.35, color='gray', fill=False, linestyle='-', linewidth=1)
@@ -31,14 +33,16 @@ def train_gas_neural(data, som_map, signals, learning_rate, ax):
     ax.add_artist(circle_outer)
     ax.add_artist(circle_inner)
     
+    # Función de actualización para cada señal durante el entrenamiento
     def update(frame):
         x = data[frame]
         winner = find_winner(x, som_map)
         update_weights(x, som_map, winner, learning_rate)
         som_scatter.set_offsets(som_map)
         print(f'Gas Neural - Signal {frame + 1}')
-        return som_scatter,
+        return som_scatter
     
+    # Crea la animación para mostrar el proceso de entrenamiento
     anim = FuncAnimation(ax.figure, update, frames=signals, interval=0.1, blit=True, repeat=False)
     ax.set_xlim(0, 1)  # Establecer límites de visualización en el eje x
     ax.set_ylim(0, 1)  # Establecer límites de visualización en el eje y
