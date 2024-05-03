@@ -92,8 +92,8 @@ def gas_algorithm(center, radius1, radius2, num_neurons, t_max, learning_rate):
 center = (0.5, 0.5)
 radius1 = 0.5
 radius2 = 0.25
-num_neurons = 10
-t_max = 400
+num_neurons = 400
+t_max = 40000
 learning_rate = 0.1
 
 # Ejecutar el algoritmo de gas neural
