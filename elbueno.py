@@ -69,5 +69,6 @@ def neural_gas(num_signals, num_neurons, t_max):
                 plot_weights(weights, e, i)
         i += 1
 
-# Example usage with 200 signals and 50 neurons
-neural_gas(200, 400, 40000)
+if __name__ == "__main__":
+
+    neural_gas(200, 400, 40000)
